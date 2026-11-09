@@ -19,4 +19,4 @@ Fecha: 6 de noviembre de 2026.
 - Revisión visual en navegador: el navegador integrado no pudo conectar con el servidor local. La interfaz está implementada, pero no se afirma una validación visual completada.
 - Ensayo del proveedor PostgreSQL elegido con solicitudes desde varias conexiones, para confirmar bloqueos y tiempos de respuesta en el entorno de destino.
 
-El código no contiene secretos de producción ni participantes reales. El servidor de vista previa, separado de la entrega, utiliza únicamente datos de muestra.
+El código no contiene secretos de producción ni participantes reales. El servidor de vista previa, separado de la entrega, utiliza únicamente datos ficticios.
