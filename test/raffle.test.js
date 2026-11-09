@@ -13,6 +13,7 @@ test('repetición explícita asigna todos los artículos',()=>{const s=setup(40,
 test('no revela resultados futuros y termina según reloj servidor',()=>{const s=setup(2,2);change(s,'start',{},1000);assert.equal(publicState(s,5999).results.length,0);assert.equal(publicState(s,6000).results.length,1);assert.equal(publicState(s,11000).phase,'finished');assert.ok(!JSON.stringify(publicState(s,1000)).includes('Apellido'));});
 test('segundo inicio no modifica reparto ni fecha',()=>{const s=setup();change(s,'start',{},1000);const saved=JSON.stringify(s);change(s,'start',{},9000);assert.equal(JSON.stringify(s),saved);});
 test('normalización impide duplicados y valida nombres',()=>{const s=initial();change(s,'register',{first:'José',last:'García López'});assert.throws(()=>change(s,'register',{first:' JOSE ',last:'GARCIA   LOPEZ'}));assert.throws(()=>change(s,'register',{first:'<script>',last:'García'}));});
+test('la organización puede añadir listas manuales y no duplicar personas',()=>{const s=initial();change(s,'addPeople',{names:['Ana García','Luis Pérez']});assert.equal(s.people.map(p=>p.name).join(','),'Ana García,Luis Pérez');assert.throws(()=>change(s,'addPeople',{names:['Ana Garcia']}),e=>e.status===409);assert.throws(()=>change(s,'addPeople',{names:['Marta Ruiz','Marta Ruiz']}),e=>e.status===409);change(s,'close');assert.throws(()=>change(s,'addPeople',{names:['Rosa Díaz']}),e=>e.status===409);});
 test('validación de inventario y estados',()=>{assert.throws(()=>change(initial(),'start'));assert.throws(()=>change(initial(),'items',{items:[...items(1),...items(1)],repeats:false}));const s=setup();assert.throws(()=>change(s,'register',{first:'Ana',last:'López'}));assert.throws(()=>change(s,'items',{items:items(1),repeats:false}));assert.throws(()=>change(setup(1,0),'start'));});
 test('shuffle conserva elementos, admite todas las permutaciones de 3',()=>{const set=new Set();for(let a=0;a<3;a++)for(let b=0;b<2;b++){let i=0;set.add(shuffle([1,2,3],()=>[a,b][i++]).join(''));}assert.equal(set.size,6);});
 test('CSV escapa comillas e impide fórmulas',()=>{const result=csv({results:[{item:{number:1,label:'=HYPERLINK("bad")'},winner:'Ana'}]});assert.ok(result.includes("'=HYPERLINK"));assert.ok(result.includes('""bad""'));});
@@ -41,9 +42,10 @@ test('API con PostgreSQL embebido: autenticación, persistencia, límites, cierr
   await post('/api/login',{password:'wrong'}).expect(401);
   await post('/api/login',{password:config.password}).expect(200);
   await post('/api/admin/items',{items:items(40),repeats:false}).expect(200);
-  await post('/api/register',{first:'Ana',last:'López'}).expect(201);
-  await post('/api/register',{first:'ANA',last:'LOPEZ'}).expect(409);
-  assert.equal((await store(db).read()).people.length,1);
+  await post('/api/admin/addPeople',{names:['Ana López','Luis Pérez']}).expect(200);
+  await post('/api/register',{first:'Marta',last:'Ruiz'}).expect(201);
+  await post('/api/register',{first:'MARTA',last:'RUIZ'}).expect(409);
+  assert.equal((await store(db).read()).people.length,3);
   await post('/api/admin/close',{}).expect(200);
   await post('/api/register',{first:'Luis',last:'Pérez'}).expect(409);
   await post('/api/admin/start',{}).expect(200);

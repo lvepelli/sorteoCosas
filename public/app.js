@@ -14,11 +14,11 @@ async function refresh(){
   if(version!==last){
    last=version;
    const latest=s.results.at(-1);
-   if(latest)$('#stage').innerHTML=`<span class="eyebrow">ARTÍCULO ${latest.item.number} · ${esc(latest.item.label)}</span><h3>${esc(latest.winner??'Sin adjudicar')}</h3><p>${latest.winner?'¡Enhorabuena! Contacta con la organización para la recogida.':'No quedan participantes disponibles sin repetir ganadores.'}</p>`;
-   else if(s.phase==='drawing')$('#stage').innerHTML='<span class="star">✳</span><h3>La suerte está en marcha…</h3><p>En unos segundos revelaremos el primer artículo.</p>';
+   if(latest){$('#stage').className='reveal';$('#stage').innerHTML=`<span class="eyebrow">ARTÍCULO ${latest.item.number} · ${esc(latest.item.label)}</span><span class="confetti">✳ ✦ ✳</span><h3>${esc(latest.winner??'Sin adjudicar')}</h3><p>${latest.winner?'¡Enhorabuena!':'Sin adjudicar'}</p>`;}
+   else if(s.phase==='drawing'){$('#stage').className='drawing';$('#stage').innerHTML=`<span class="star">✳</span><span class="eyebrow">PREPARANDO ARTÍCULO ${s.results.length+1}</span><h3>La suerte está en marcha…</h3>`;}
    $('#results').innerHTML=s.results.length?s.results.map(r=>`<div><span>#${r.item.number}</span><span>${esc(r.item.label)}</span><strong>${esc(r.winner??'Sin adjudicar')}</strong></div>`).join(''):'<p>Todavía no hay resultados.</p>';
   }
-  $('#progress').textContent=s.phase==='finished'?`Sorteo finalizado · ${s.results.filter(r=>r.winner).length} artículos adjudicados · ${s.results.filter(r=>!r.winner).length} sin adjudicar`:s.phase==='drawing'?`${s.results.length} de ${s.total} resultados publicados · siguiente en ${Math.max(1,Math.ceil((s.nextAt-s.serverTime)/1000))} s`:'';
+  $('#progress').textContent=s.phase==='finished'?`Sorteo finalizado · ${s.results.filter(r=>r.winner).length} artículos adjudicados · ${s.results.filter(r=>!r.winner).length} sin adjudicar`:s.phase==='drawing'?`${s.results.length} de ${s.total} resultados · siguiente revelación en ${Math.max(1,Math.ceil((s.nextAt-s.serverTime)/1000))} s`:'';
  }catch(e){failed=true;$('#connection').textContent='Sin conexión · intentando reconectar';$('#register button').disabled=true;$('#progress').textContent=e.message;}
  setTimeout(refresh,failed?4000:1000);
 }

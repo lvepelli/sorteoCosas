@@ -6,12 +6,14 @@ async function load(){
  $('#summary').textContent=`${s.items.length} artículos · ${s.participants} personas · ${{open:'abierto',closed:'cerrado',drawing:'en curso',finished:'finalizado'}[s.phase]}`;
  $('#inventory textarea').value=s.items.map(i=>i.number+';'+i.label).join('\n');$('#inventory input').checked=s.repeats;
  $('#inventory').querySelectorAll('input,textarea,button').forEach(el=>el.disabled=s.phase!=='open');$('#close').disabled=s.phase!=='open';$('#start').disabled=s.phase!=='closed'||!s.participants||!s.items.length;
+ $('#people-form').querySelectorAll('textarea,button').forEach(el=>el.disabled=s.phase!=='open');
  $('#impact').textContent=s.repeats?'Repetición activada. Todos los artículos tendrán ganador si hay participantes.':`${Math.max(0,s.items.length-s.participants)} artículos quedarán sin adjudicar. ${Math.max(0,s.participants-s.items.length)} personas no recibirán premio.`;
  $('#people').replaceChildren(...s.people.map(p=>{const li=document.createElement('li');li.textContent=p.name;return li;}));
 }
 async function run(fn){try{await fn();}catch(e){message(e.message);}}
 $('#login').onsubmit=e=>{e.preventDefault();run(async()=>{await api('login',{password:new FormData(e.target).get('password')});e.target.reset();await load();message('Sesión iniciada.');});};
 $('#inventory').onsubmit=e=>{e.preventDefault();run(async()=>{const f=new FormData(e.target);const lines=f.get('items').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).filter((x,i)=>!(i===0&&/^numero;/i.test(x)));const items=lines.map(line=>{const index=line.indexOf(';');if(index<1)throw Error('Usa número;descripción en cada línea.');return {number:Number(line.slice(0,index)),label:line.slice(index+1)};});await api('admin/items',{items,repeats:f.has('repeats')});await load();message('Inventario y reglas guardados.');});};
+$('#people-form').onsubmit=e=>{e.preventDefault();run(async()=>{const textarea=e.currentTarget.elements.names;const names=textarea.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);await api('admin/addPeople',{names});textarea.value='';await load();message(names.length+' persona(s) añadida(s).');});};
 $('#close').onclick=()=>{if(confirm('¿Cerrar las inscripciones? Ya no se podrán añadir personas ni cambiar artículos.'))run(async()=>{await api('admin/close',{});await load();message('Inscripciones cerradas.');});};
 $('#start').onclick=()=>{if(confirm('¿Iniciar el sorteo definitivo? No se podrá repetir ni modificar el reparto.'))run(async()=>{await api('admin/start',{});await load();message('Sorteo iniciado. Abre la página pública para seguir el directo.');});};
 $('#logout').onclick=()=>run(async()=>{await api('logout',{});location.reload();});
