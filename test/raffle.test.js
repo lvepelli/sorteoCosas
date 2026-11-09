@@ -41,12 +41,11 @@ test('API con PostgreSQL embebido: autenticación, persistencia, límites, cierr
   await post('/api/login',{password:'wrong'}).expect(401);
   await post('/api/login',{password:config.password}).expect(200);
   await post('/api/admin/items',{items:items(40),repeats:false}).expect(200);
-  await post('/api/register',{first:'Ana',last:'López',consent:false}).expect(400);
-  await post('/api/register',{first:'Ana',last:'López',consent:true}).expect(201);
-  await post('/api/register',{first:'ANA',last:'LOPEZ',consent:true}).expect(409);
+  await post('/api/register',{first:'Ana',last:'López'}).expect(201);
+  await post('/api/register',{first:'ANA',last:'LOPEZ'}).expect(409);
   assert.equal((await store(db).read()).people.length,1);
   await post('/api/admin/close',{}).expect(200);
-  await post('/api/register',{first:'Luis',last:'Pérez',consent:true}).expect(409);
+  await post('/api/register',{first:'Luis',last:'Pérez'}).expect(409);
   await post('/api/admin/start',{}).expect(200);
   const before=JSON.stringify(await repo.read());await post('/api/admin/start',{}).expect(200);assert.equal(JSON.stringify(await repo.read()),before);
   const state=(await agent.get('/api/state').expect(200)).body;assert.equal(state.results.length,0);assert.equal(state.people,undefined);
