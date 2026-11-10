@@ -1,0 +1,2 @@
+.demo-stage.demo-reveal .winner-ticket{animation:ticket-out 1.35s cubic-bezier(.16,.86,.26,1.35);left:7%;top:50%;z-index:5}.demo-stage.demo-reveal .draw-visual{filter:brightness(.72)}
+@media(max-width:800px){.demo-stage.demo-reveal .winner-ticket{left:8%;top:69%;width:84%}}
