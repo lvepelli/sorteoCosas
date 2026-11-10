@@ -1,0 +1,3 @@
+/* Archivo nuevo para que navegador y CDN no reutilicen la versión anterior. */
+.winner-ticket small,.draw-stage.reveal .winner-ticket small,.demo-stage.demo-reveal .winner-ticket small{display:block!important;color:#2b1505!important;font-size:19px!important;font-weight:800!important;line-height:1.35!important;letter-spacing:.2px!important;opacity:1!important;text-shadow:0 1px 0 #ffe8a7}
+@media(max-width:800px){.winner-ticket small,.draw-stage.reveal .winner-ticket small,.demo-stage.demo-reveal .winner-ticket small{font-size:17px!important}}
