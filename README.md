@@ -1,4 +1,4 @@
-# Segunda vida — sorteo entre empleados
+# Sorteo en directo
 
 MVP para un único sorteo interno. Aplicación real Express + PostgreSQL, preparada para Vercel. Sin datos simulados en producción; el inventario comienza vacío. La plantilla contiene 40 premios genéricos para ajustar antes de cargar.
 

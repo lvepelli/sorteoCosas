@@ -1,5 +1,14 @@
-<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Segunda vida · Sorteo entre compañeros</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/modern.css"><script src="/app.js" defer></script></head><body>
-<header><a class="brand" href="/">✳ <span>segunda vida<small>SORTEO ENTRE COMPAÑEROS</small></span></a><nav><a href="#directo">Resultados</a><a class="admin-link" href="/admin.html">Administración ↗</a></nav></header>
-<main><section class="hero hero-compact"><div><span class="eyebrow">SORTEOS ENTRE COMPAÑEROS</span><h1>Apúntate al<br><em>sorteo.</em></h1><p class="intro">Introduce tu nombre y apellidos para participar.</p><form id="register" class="card registration-card"><label>Nombre<input name="first" autocomplete="given-name" required minlength="2" maxlength="80" placeholder="Tu nombre"></label><label>Apellidos<input name="last" autocomplete="family-name" required minlength="2" maxlength="80" placeholder="Tus apellidos"></label><button>Participar ↗</button><p id="register-message" role="status"></p></form></div><figure class="hero-art"><img src="/hero-raffle-modern.png" alt="Urna de sorteo de cristal con bolas verdes y detalles dorados"></figure></section>
-<section class="stats compact-stats"><div><strong id="item-count">—</strong><span>premios</span></div><div><strong id="people-count">—</strong><span>personas inscritas</span></div><div><strong id="phase">Conectando</strong><span id="connection">Actualizando</span></div></section>
-<section id="directo" class="live"><div class="section-head"><h2>Resultados</h2><span id="live-badge" class="badge">Sala de espera</span></div><div id="stage" aria-live="polite"><span class="star">✳</span><h3>El sorteo empezará pronto.</h3></div><p id="progress"></p><div class="section-head"><h3>Resultados publicados</h3><a href="/api/results.csv">Descargar CSV ↓</a></div><div id="results" class="results"><p>Todavía no hay resultados.</p></div></section></main><footer><span>✳ segunda vida</span><span>Menos almacén. Más ilusión.</span></footer></body></html>
+<!doctype html>
+<html lang="es"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SORTEO</title>
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/modern.css">
+  <script src="/app.js" defer></script>
+</head><body>
+  <header><a class="brand" href="/">SORTEO</a><a class="admin-link" href="/admin.html">Administración</a></header>
+  <main>
+    <section class="hero hero-minimal"><div class="entry"><h1>SORTEO</h1><form id="register" class="registration-card"><label>Nombre<input name="first" autocomplete="given-name" required minlength="2" maxlength="80" placeholder="Nombre"></label><label>Apellido<input name="last" autocomplete="family-name" required minlength="2" maxlength="80" placeholder="Apellido"></label><button>Participar</button></form></div><figure class="hero-art"><img src="/bombo-dorado-sorteo.png" alt="Bombo dorado de sorteo"></figure></section>
+    <section class="stats compact-stats"><div><strong id="item-count">—</strong><span>premios</span></div><div><strong id="people-count">—</strong><span>personas inscritas</span></div><div class="actions"><a class="download" href="#directo" id="live-link">Ver sorteo en directo</a><a class="download" href="/api/results.csv">Descargar resultados</a></div></section>
+    <section id="directo" class="live" hidden><div id="stage" aria-live="polite"></div><div id="results" class="results"></div></section>
+  </main>
+</body></html>
