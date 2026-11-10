@@ -1,5 +1,6 @@
 @import url('/direct.css');
 @import url('/admin-demo-ticket.css');
+@import url('/ticket-fix.css');
 .demo-screen{position:fixed;inset:0;z-index:20;background:#08070ee8;padding:28px;display:grid;place-items:center}
 .demo-panel{width:min(960px,100%);max-height:92vh;overflow:auto;background:#16131c;border:1px solid #ffffff1c;color:#fff;border-radius:20px;padding:28px;box-shadow:0 30px 100px #0008}
 .demo-top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}.demo-top button{width:auto}
