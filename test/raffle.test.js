@@ -15,6 +15,7 @@ test('no revela resultados futuros y termina según reloj servidor',()=>{const s
 test('segundo inicio no modifica reparto ni fecha',()=>{const s=setup();change(s,'start',{},1000);const saved=JSON.stringify(s);change(s,'start',{},9000);assert.equal(JSON.stringify(s),saved);});
 test('normalización impide duplicados y valida nombres',()=>{const s=initial();change(s,'register',{first:'José',last:'García López'});assert.throws(()=>change(s,'register',{first:' JOSE ',last:'GARCIA   LOPEZ'}));assert.throws(()=>change(s,'register',{first:'<script>',last:'García'}));});
 test('la organización puede añadir listas manuales y no duplicar personas',()=>{const s=initial();change(s,'addPeople',{names:['Ana García','Luis Pérez']});assert.equal(s.people.map(p=>p.name).join(','),'Ana García,Luis Pérez');assert.throws(()=>change(s,'addPeople',{names:['Ana Garcia']}),e=>e.status===409);assert.throws(()=>change(s,'addPeople',{names:['Marta Ruiz','Marta Ruiz']}),e=>e.status===409);change(s,'close');assert.throws(()=>change(s,'addPeople',{names:['Rosa Díaz']}),e=>e.status===409);});
+test('la organización puede eliminar inscritos antes del sorteo',()=>{const s=initial();change(s,'addPeople',{names:['Ana García','Luis Pérez']});const first=s.people[0].id;change(s,'removePerson',{id:first});assert.deepEqual(s.people.map(p=>p.name),['Luis Pérez']);assert.throws(()=>change(s,'removePerson',{id:first}),e=>e.status===404);change(s,'close');change(s,'removePerson',{id:s.people[0].id});assert.equal(s.people.length,0);const drawing=setup(1,1);change(drawing,'start');assert.throws(()=>change(drawing,'removePerson',{id:drawing.people[0].id}),e=>e.status===409);});
 test('validación de inventario y estados',()=>{assert.throws(()=>change(initial(),'start'));assert.throws(()=>change(initial(),'items',{items:[...items(1),...items(1)],repeats:false}));const s=setup();assert.throws(()=>change(s,'register',{first:'Ana',last:'López'}));assert.throws(()=>change(s,'items',{items:items(1),repeats:false}));assert.throws(()=>change(setup(1,0),'start'));});
 test('shuffle conserva elementos, admite todas las permutaciones de 3',()=>{const set=new Set();for(let a=0;a<3;a++)for(let b=0;b<2;b++){let i=0;set.add(shuffle([1,2,3],()=>[a,b][i++]).join(''));}assert.equal(set.size,6);});
 test('CSV escapa comillas e impide fórmulas',()=>{const result=csv({results:[{item:{number:1,label:'=HYPERLINK("bad")'},winner:'Ana'}]});assert.ok(result.includes("'=HYPERLINK"));assert.ok(result.includes('""bad""'));});
@@ -47,6 +48,9 @@ test('API con PostgreSQL embebido: autenticación, persistencia, límites, cierr
   await post('/api/register',{first:'Marta',last:'Ruiz'}).expect(201);
   await post('/api/register',{first:'MARTA',last:'RUIZ'}).expect(409);
   assert.equal((await store(db).read()).people.length,3);
+  const enrolled=(await agent.get('/api/admin').expect(200)).body.people;
+  await post('/api/admin/removePerson',{id:enrolled.find(person=>person.name==='Ana López').id}).expect(200);
+  assert.equal((await store(db).read()).people.length,2);
   await post('/api/admin/close',{}).expect(200);
   await post('/api/register',{first:'Luis',last:'Pérez'}).expect(409);
   await post('/api/admin/start',{}).expect(200);
