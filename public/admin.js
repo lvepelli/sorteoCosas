@@ -8,7 +8,13 @@ async function load(){
  $('#inventory').querySelectorAll('input,textarea,button').forEach(el=>el.disabled=s.phase!=='open');$('#close').disabled=s.phase!=='open';$('#start').disabled=s.phase!=='closed'||!s.participants||!s.items.length;
  $('#people-form').querySelectorAll('textarea,button').forEach(el=>el.disabled=s.phase!=='open');
  $('#impact').textContent=s.repeats?'Repetición activada. Todos los premios tendrán ganador si hay participantes.':`${Math.max(0,s.items.length-s.participants)} premios quedarán sin adjudicar. ${Math.max(0,s.participants-s.items.length)} personas no recibirán premio.`;
- $('#people').replaceChildren(...s.people.map(p=>{const li=document.createElement('li');li.textContent=p.name;return li;}));
+ const canRemove=['open','closed'].includes(s.phase);
+ $('#people').replaceChildren(...s.people.map(p=>{
+   const li=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button');
+   label.textContent=p.name;remove.type='button';remove.className='secondary';remove.textContent='Eliminar';remove.disabled=!canRemove;
+   remove.onclick=()=>{if(confirm('¿Eliminar a '+p.name+' del sorteo? Esta acción no se puede deshacer.'))run(async()=>{await api('admin/removePerson',{id:p.id});await load();message(p.name+' se ha eliminado del sorteo.');});};
+   li.append(label,remove);return li;
+ }));
 }
 async function run(fn){try{await fn();}catch(e){message(e.message);}}
 $('#login').onsubmit=e=>{e.preventDefault();run(async()=>{await api('login',{password:new FormData(e.target).get('password')});e.target.reset();await load();message('Sesión iniciada.');});};
